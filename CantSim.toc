@@ -1,0 +1,9 @@
+## Interface: 40000
+## Title: Can't Sim
+## Notes:  Addon to incorporate google sheets into the game for folks that can't get pawn strings by simming
+## Author: NutsPanther
+## Version: 0.1
+
+embeds.xml
+
+Core.lua

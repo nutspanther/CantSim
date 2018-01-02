@@ -2,7 +2,8 @@
 ## Title: Can't Sim
 ## Notes:  Addon to incorporate google sheets into the game for folks that can't get pawn strings by simming
 ## Author: NutsPanther
-## Version: 0.1
+## Version: 0.2-beta
+## SavedVariables: CantSimDB
 
 embeds.xml
 

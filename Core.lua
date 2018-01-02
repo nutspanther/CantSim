@@ -13,13 +13,13 @@ local defaults = {
         }
     }
 }
-DB = {
+--[[ DB = {
         stats = {},
         atonementHealing = 72,
         leechPawn = 2.17,
         avoidancePawn = 1.5,
         scalingLeechBool = false
-}
+} ]]
 function CantSim:GetCharacterStats()
     DB.stats["critRating"] = GetCombatRating(9) 
     DB.stats["critPercent"] = GetCritChance()
@@ -208,7 +208,7 @@ local options = {
 }
 
 function CantSim:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New(addonName, defaults, true)
+    self.db = LibStub("AceDB-3.0"):New("CantSimDB", defaults, true)
 
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options, "cs", "cantsim")
 

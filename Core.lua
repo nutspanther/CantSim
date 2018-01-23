@@ -13,6 +13,8 @@ local defaults = {
         }
     }
 }
+local stats = {}
+local pawnString = ""
 --[[ DB = {
         stats = {},
         atonementHealing = 72,
@@ -21,76 +23,78 @@ local defaults = {
         scalingLeechBool = false
 } ]]
 function CantSim:GetCharacterStats()
-    DB.stats["critRating"] = GetCombatRating(9) 
-    DB.stats["critPercent"] = GetCritChance()
-    DB.stats["hasteRating"] = GetCombatRating(18)
-    DB.stats["hastePercent"] = GetHaste()
-    DB.stats["masteryRating"] = GetCombatRating(26)
-    DB.stats["masteryPercent"] = DB.stats.masteryRating / 250
-    DB.stats["versatilityRating"] = GetCombatRating(29)
-    DB.stats.versatilityPercent = DB.stats.versatilityRating / 475
-    DB.stats.effectiveILvl = select(1, GetDetailedItemLevelInfo(GetInventoryItemLink("player", 16)))
-    DB.stats.classInfo = UnitClass("player")
-    DB.stats.currentSpec = GetSpecialization()
-    DB.stats.currentSpecName = DB.stats.currentSpec and select(2, GetSpecializationInfo(DB.stats.currentSpec)) or "None"
-    DB.stats.leechRating = GetCombatRating(17)
-    DB.stats.leechPercent = DB.stats.leechRating / 230
+    stats["critRating"] = GetCombatRating(9) 
+    stats["critPercent"] = GetCritChance()
+    stats["hasteRating"] = GetCombatRating(18)
+    stats["hastePercent"] = GetHaste()
+    stats["masteryRating"] = GetCombatRating(26)
+    stats["masteryPercent"] = stats.masteryRating / 250
+    stats["versatilityRating"] = GetCombatRating(29)
+    stats.versatilityPercent = stats.versatilityRating / 475
+    stats.effectiveILvl = select(1, GetDetailedItemLevelInfo(GetInventoryItemLink("player", 16)))
+    stats.classInfo = UnitClass("player")
+    stats.currentSpec = GetSpecialization()
+    stats.currentSpecName = stats.currentSpec and select(2, GetSpecializationInfo(stats.currentSpec)) or "None"
+    stats.leechRating = GetCombatRating(17)
+    stats.leechPercent = stats.leechRating / 230
     isDisciplinePriest = false
 end
 
 function CantSim:GetPriestPawn()
-    if DB.stats.currentSpecName == "Discipline" then
+    if stats.currentSpecName == "Discipline" then
         isDisciplinePriest = true
         leechModifier = 1
-        DB.stats.intRating = UnitStat("player", 4)
-        DB.stats.intPawn = 1000/((DB.stats.intRating/100)/1.05)
-        DB.stats.critPawn = 1000*leechModifier/400/((DB.stats.critPercent/100 * leechModifier) + 1)
-        DB.stats.masteryPawn = 1000*(1/250/(1+(DB.stats.masteryPercent + 12.8)/100)* DB.atonementHealing/100)
-        DB.stats.versatilityPawn = 1000 * (1/475/(1+DB.stats.versatilityPercent/100))
-        DB.stats.maxResult = math.max(DB.stats.critPawn, DB.stats.masteryPawn, DB.stats.versatilityPawn)
-        DB.stats.hastePawn = DB.stats.maxResult * 1.25 / (1 + (DB.stats.hastePercent/100))
+        stats.intRating = UnitStat("player", 4)
+        stats.intPawn = 1000/((stats.intRating/100)/1.05)
+        stats.critPawn = 1000*leechModifier/400/((stats.critPercent/100 * leechModifier) + 1)
+        stats.masteryPawn = 1000*(1/250/(1+(stats.masteryPercent + 12.8)/100)* DB.atonementHealing/100)
+        stats.versatilityPawn = 1000 * (1/475/(1+stats.versatilityPercent/100))
+        stats.maxResult = math.max(stats.critPawn, stats.masteryPawn, stats.versatilityPawn)
+        stats.hastePawn = stats.maxResult * 1.25 / (1 + (stats.hastePercent/100))
         if DB.scalingLeechBool then
-            DB.stats.leechPawn = (1 / math.sqrt(DB.stats.leechPercent/100)) * .3
-            if(DB.stats.leechPawn > 2.17) then
-                DB.stats.leechPawn = 2.17
+            stats.leechPawn = (1 / math.sqrt(stats.leechPercent/100)) * .3
+            if(stats.leechPawn > 2.17) then
+                stats.leechPawn = 2.17
             end
         else
-            DB.stats.leechPawn = DB.leechPawn
+            stats.leechPawn = DB.leechPawn
         end
-        DB.stats.avoidancePawn = DB.avoidancePawn
-        DB.pawnString = "( Pawn: v1: \""..DB.stats.currentSpecName.." (Can't Sim)\": Intellect="..DB.stats.intPawn..", Versatility="..DB.stats.versatilityPawn..", HasteRating="..DB.stats.hastePawn..", MasteryRating="..DB.stats.masteryPawn..", CritRating="..DB.stats.critPawn..", Leech="..DB.stats.leechPawn..", Avoidance="..DB.stats.avoidancePawn..")"
+        stats.avoidancePawn = DB.avoidancePawn
+        pawnString = "( Pawn: v1: \""..stats.currentSpecName.." (Can't Sim)\": Intellect="..stats.intPawn..", Versatility="..stats.versatilityPawn..", HasteRating="..stats.hastePawn..", MasteryRating="..stats.masteryPawn..", CritRating="..stats.critPawn..", Leech="..stats.leechPawn..", Avoidance="..stats.avoidancePawn..")"
+    else 
+        pawnString = "Your class/spec is not supported yet. Feel free to PM me @Drizz#2038 on Discord to get your spec started."
     end
 end
 
 --GET PAWN STRINGS
 function CantSim:GetPawnStringDialog()
     CantSim:GetCharacterStats()
-    if DB.stats.classInfo == "Priest" then
+    if stats.classInfo == "Priest" then
         CantSim:GetPriestPawn()
     else 
-        DB.pawnString = "Your class/spec is not supported yet. Feel free to PM me @Drizz#2038 on Discord to get your spec started."
+        pawnString = "Your class/spec is not supported yet. Feel free to PM me @Drizz#2038 on Discord to get your spec started."
     end
     if debug then 
-        for k,v in pairs(DB.stats) do print(k,v) end
-        print(DB.pawnString)
+        for k,v in pairs(stats) do print(k,v) end
+        print(pawnString)
     end
-    LibStub("AceConfigDialog-3.0"):SelectGroup(addonName, DB.pawnString)
+    LibStub("AceConfigDialog-3.0"):SelectGroup(addonName, pawnString)
 end
 
 function CantSim:GetPawnStringConsole()
     CantSim:GetCharacterStats()
-    if DB.stats.classInfo == "Priest" then
+    if stats.classInfo == "Priest" then
         CantSim:GetPriestPawn()
     else 
-        DB.pawnString = "Your class/spec is not supported yet. Feel free to PM me @Drizz#2038 on Discord to get your spec started."
+        pawnString = "Your class/spec is not supported yet. Feel free to PM me @Drizz#2038 on Discord to get your spec started."
     end
     if debug then 
-        for k,v in pairs(DB.stats) do print(k,v) end
-        print(DB.pawnString)
+        for k,v in pairs(stats) do print(k,v) end
+        print(pawnString)
         for k,v in pairs(self.db.profile) do print(k,v) end
     end
     LibStub("AceConfigDialog-3.0"):Open(addonName)
-    LibStub("AceConfigDialog-3.0"):SelectGroup(addonName, DB.pawnString)
+    LibStub("AceConfigDialog-3.0"):SelectGroup(addonName, pawnString)
 end
 
 function CantSim:Reset()
@@ -145,7 +149,7 @@ local options = {
                     desc = "Displays your pawn string",
                     multiline = 5,
                     width = "full",
-                    get = function() return DB.pawnString end,
+                    get = function() return pawnString end,
                     cmdHidden = true
                 },
             }

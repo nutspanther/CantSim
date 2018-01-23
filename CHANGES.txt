@@ -1,0 +1,10 @@
+lightweight tag d35e707a857ef41a0375c2e301a72e38b5d3f72d 0.5-beta
+Author:	Trey Hecht <hechtta@protonmail.com>
+Date:	Sat Jan 20 14:00:49 2018 -0500
+
+commit d35e707a857ef41a0375c2e301a72e38b5d3f72d
+Author: Trey Hecht <hechtta@protonmail.com>
+Date:   Sat Jan 20 14:00:49 2018 -0500
+
+    I'm a moron.
+

@@ -32,16 +32,16 @@ function CantSim:GetCharacterStats()
     stats["versatilityRating"] = GetCombatRating(29)
     stats.versatilityPercent = stats.versatilityRating / 475
     stats.effectiveILvl = select(1, GetDetailedItemLevelInfo(GetInventoryItemLink("player", 16)))
-    stats.classInfo = UnitClass("player")
-    stats.currentSpec = GetSpecialization()
-    stats.currentSpecName = stats.currentSpec and select(2, GetSpecializationInfo(stats.currentSpec)) or "None"
+    stats.classInfo = select(3, UnitClass("player"))
+    stats.currentSpec = select(1, GetSpecializationInfo(GetSpecialization())) or "None"
+    stats.currentSpecName = select(2, GetSpecializationInfo(GetSpecialization())) or "None"   
     stats.leechRating = GetCombatRating(17)
     stats.leechPercent = stats.leechRating / 230
     isDisciplinePriest = false
 end
 
 function CantSim:GetPriestPawn()
-    if stats.currentSpecName == "Discipline" then
+    if stats.currentSpec == 256 then  --[[ Discipline ]]
         isDisciplinePriest = true
         leechModifier = 1
         stats.intRating = UnitStat("player", 4)
@@ -69,7 +69,7 @@ end
 --GET PAWN STRINGS
 function CantSim:GetPawnStringDialog()
     CantSim:GetCharacterStats()
-    if stats.classInfo == "Priest" then
+    if stats.classInfo == 5 then --[[ Priest ]]
         CantSim:GetPriestPawn()
     else 
         pawnString = "Your class/spec is not supported yet. Feel free to PM me @Drizz#2038 on Discord to get your spec started."
@@ -83,7 +83,7 @@ end
 
 function CantSim:GetPawnStringConsole()
     CantSim:GetCharacterStats()
-    if stats.classInfo == "Priest" then
+    if stats.classInfo == 5 then  --[[ Priest ]]
         CantSim:GetPriestPawn()
     else 
         pawnString = "Your class/spec is not supported yet. Feel free to PM me @Drizz#2038 on Discord to get your spec started."
